@@ -1,0 +1,33 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Local editing uses Decap's proxy. Production uses Netlify Identity + Git Gateway.
+local_backend: true
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: posts
+    label: Bài viết
+    label_singular: Bài viết
+    folder: content/posts
+    extension: mdx
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}} — {{date}}"
+    fields:
+      - { label: Tiêu đề, name: title, widget: string }
+      - { label: Slug URL, name: slug, widget: string, hint: "Ví dụ: distributed-systems-clock-skew" }
+      - { label: Ngày xuất bản, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Mô tả SEO, name: description, widget: text, hint: "Mô tả ngắn, rõ ràng; tối đa khoảng 160 ký tự." }
+      - label: Chủ đề
+        name: tags
+        widget: list
+        min: 1
+        field: { label: Chủ đề, name: tag, widget: string }
+      - { label: Bài nổi bật, name: featured, widget: boolean, default: false, required: false }
+      - { label: Ảnh đại diện, name: cover, widget: image, required: false }
+      - { label: Nội dung, name: body, widget: markdown }
