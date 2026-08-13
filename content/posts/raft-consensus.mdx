@@ -1,0 +1,20 @@
+---
+title: "Raft Is Not as Simple as It Looks"
+slug: "raft-consensus"
+date: "2026-05-03"
+description: "Corner cases in leader election, log replication subtleties, and configuration changes — the parts the paper glosses over that bite you in production."
+tags: ["distributed-systems", "consensus"]
+featured: false
+---
+
+## Elections need timing discipline
+
+Randomized timeouts reduce split votes, but they must be chosen around real network latency and pause behavior. Record election churn before treating it as a correctness issue.
+
+## Commit only what a majority confirms
+
+The leader may replicate entries out of order across followers. Advance the commit index only when an entry from the current term is known to be replicated on a majority.
+
+## Membership changes are data changes
+
+Configuration changes require the same careful replication as application data. Joint consensus avoids a gap where two different majorities could both make progress.

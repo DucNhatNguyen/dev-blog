@@ -1,0 +1,29 @@
+---
+title: "Writing a Minimal Async Executor in Rust"
+slug: "rust-async-executor"
+date: "2026-07-10"
+description: "A deep dive into building a single-threaded async runtime from scratch — task queues, waker mechanics, and the poll model explained without magic."
+tags: ["rust", "async", "systems"]
+featured: true
+---
+
+## Polling is a contract
+
+An async executor repeatedly polls futures that are ready to make progress. A poll may return a value, or it may return `Pending` after arranging for its waker to be called later.
+
+## The ready queue
+
+The smallest useful executor owns a queue of tasks. A waker places its task back on that queue whenever an I/O event, timer, or another future makes progress possible.
+
+```rust
+while let Some(task) = ready_queue.pop() {
+    let mut future = task.future.lock().unwrap();
+    if future.as_mut().poll(&mut context).is_pending() {
+        continue;
+    }
+}
+```
+
+## Design for fairness
+
+Keep a task poll short, avoid blocking work in the executor, and bound queues where back-pressure matters. The model stays simple when each task cooperates.

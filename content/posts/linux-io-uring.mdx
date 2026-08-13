@@ -1,0 +1,20 @@
+---
+title: "io_uring and the New World of Async I/O on Linux"
+slug: "linux-io-uring"
+date: "2026-05-19"
+description: "A practitioner's look at io_uring: submission queues, completion queues, fixed buffers, and what it means for server application design."
+tags: ["linux", "systems", "async"]
+featured: false
+---
+
+## Two shared rings
+
+Applications submit operations through a submission queue and consume results from a completion queue. This reduces system-call overhead when a workload issues many small I/O operations.
+
+## Register stable resources
+
+Fixed buffers and registered file descriptors reduce repeated setup costs. They help most when the server reuses the same resources across many requests.
+
+## Preserve cancellation paths
+
+Async I/O needs explicit cleanup. Associate operations with request lifetimes and make cancellation observable so connections do not retain work after a client leaves.

@@ -1,0 +1,20 @@
+---
+title: "B-Trees at the Storage Layer: A Field Guide"
+slug: "btree-storage-engine"
+date: "2026-06-22"
+description: "From page layout to WAL integration, this post walks through how modern storage engines implement B-tree variants for durability and concurrency."
+tags: ["databases", "storage"]
+featured: false
+---
+
+## Pages are the unit of work
+
+A storage engine reads and writes fixed-size pages. A B-tree node therefore needs a compact header, a slot directory, keys, values, and enough free space for future inserts.
+
+## Make writes recoverable
+
+Write-ahead logging records an intended page change before the changed page reaches durable storage. During recovery, the log supplies the history needed to redo safe changes.
+
+## Splits are a coordination problem
+
+When a leaf fills, split it and publish the new separator to its parent. Latches protect each local edit, while the logging protocol protects the change across crashes.

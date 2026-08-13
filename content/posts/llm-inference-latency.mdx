@@ -1,0 +1,20 @@
+---
+title: "Taming Latency in LLM Inference Serving"
+slug: "llm-inference-latency"
+date: "2026-06-05"
+description: "Continuous batching, speculative decoding, and KV-cache management — the techniques that actually move the needle on p99 latency at scale."
+tags: ["ml-systems", "inference"]
+featured: false
+---
+
+## Optimize the tail first
+
+Average latency hides the requests that users remember. Track queue time, time to first token, and total generation time separately before choosing an optimization.
+
+## Batch without waiting too long
+
+Continuous batching admits new requests between decoding steps. It improves accelerator utilization while keeping each request responsive enough for interactive use.
+
+## Treat KV cache as capacity
+
+KV cache memory determines concurrency. Evict deliberately, reuse prefixes when possible, and protect long-running generations from being starved by short traffic bursts.

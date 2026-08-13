@@ -1,0 +1,20 @@
+---
+title: "Consistent Hashing: What Papers Don't Tell You"
+slug: "consistent-hashing-deep-dive"
+date: "2026-04-02"
+description: "Virtual nodes, bounded loads, and the implementation choices that determine whether consistent hashing actually works for your use case."
+tags: ["distributed-systems", "algorithms"]
+featured: false
+---
+
+## A ring is only the starting point
+
+Consistent hashing minimizes movement when nodes join or leave, but a single position per node often creates uneven load. Virtual nodes smooth that distribution.
+
+## Bound the hot spots
+
+For workloads with skewed keys, use a bounded-load strategy that skips nodes already above a target load. The ring chooses candidates; load information makes the final choice practical.
+
+## Make ownership inspectable
+
+Expose ring membership, replica placement, and movement estimates. Operators should be able to explain why a key moved before a rebalance becomes an incident.

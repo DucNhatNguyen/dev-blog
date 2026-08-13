@@ -1,0 +1,33 @@
+---
+title: "Clock Skew and the Fallacies of Distributed Time"
+slug: "distributed-systems-clock-skew"
+date: "2026-07-28"
+description: "How physical clocks lie to your system, why NTP is not enough, and the case for hybrid logical clocks in modern distributed databases."
+tags: ["distributed-systems", "databases"]
+featured: true
+---
+
+## Physical time is an estimate
+
+Every server has a clock, but no two clocks agree perfectly. Network delay, oscillator drift, and virtual-machine scheduling make an observed timestamp an estimate rather than a fact.
+
+> A distributed system should use wall-clock time for observation, not as the sole source of ordering.
+
+## Keep causality explicit
+
+NTP reduces error but cannot eliminate it. When an application needs a stable order across nodes, attach logical information to each event instead of relying on a timestamp alone.
+
+```ts
+type HybridTimestamp = { wallTime: number; logical: number };
+
+function nextTimestamp(previous: HybridTimestamp): HybridTimestamp {
+  const wallTime = Date.now();
+  return wallTime > previous.wallTime
+    ? { wallTime, logical: 0 }
+    : { wallTime: previous.wallTime, logical: previous.logical + 1 };
+}
+```
+
+## Operational rule
+
+Measure clock offset, alert on large drift, and document the maximum tolerated skew. Hybrid logical clocks make causal order visible without pretending physical time is exact.

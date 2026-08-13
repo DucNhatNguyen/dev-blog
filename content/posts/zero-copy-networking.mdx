@@ -1,0 +1,20 @@
+---
+title: "Zero-Copy Networking: sendfile, splice, and Beyond"
+slug: "zero-copy-networking"
+date: "2026-04-17"
+description: "How to move data from disk to socket without ever touching userspace — the kernel interfaces that make high-throughput servers possible."
+tags: ["linux", "systems", "networking"]
+featured: false
+---
+
+## Copies cost memory bandwidth
+
+Sending a file through user space can copy data between kernel and application buffers more than once. At high throughput, those copies compete with useful application work.
+
+## Pick the right primitive
+
+`sendfile` is a strong fit for file-to-socket transfers. `splice` can connect file descriptors through a kernel pipe. Both reduce copies, but neither removes the need for flow control and error handling.
+
+## Benchmark with real payloads
+
+Measure CPU, memory pressure, throughput, and tail latency using the file sizes and connection counts that resemble production.
