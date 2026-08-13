@@ -11,6 +11,11 @@ The admin interface is available at `/admin/` and is intentionally marked `noind
 5. Enable **Git Gateway** and keep access limited to authenticated Identity users.
 6. Deploy the site and open `/admin/`. Only the invited account can authenticate and create commits in `content/posts/`.
 
+The free-plan flow loads the Netlify Identity widget on the public site. It
+handles an invitation link at the home URL, lets the invited user set a
+password, and redirects a successful login to `/admin/`; no paid email-template
+customisation is needed.
+
 ## Local preview
 
 For local Decap editing, run the Decap proxy and the Next.js app in separate terminals:

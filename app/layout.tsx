@@ -75,6 +75,32 @@ export default function RootLayout({
             }
           } catch {}`}
         </Script>
+        <Script
+          src="https://identity.netlify.com/v1/netlify-identity-widget.js"
+          strategy="beforeInteractive"
+        />
+        <Script id="netlify-identity-redirect" strategy="afterInteractive">
+          {`(function () {
+            function redirectToAdmin() {
+              window.location.assign("/admin/");
+            }
+
+            function connectIdentityWidget() {
+              if (!window.netlifyIdentity) {
+                window.setTimeout(connectIdentityWidget, 50);
+                return;
+              }
+
+              window.netlifyIdentity.on("init", function (user) {
+                if (!user) {
+                  window.netlifyIdentity.on("login", redirectToAdmin);
+                }
+              });
+            }
+
+            connectIdentityWidget();
+          })();`}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
