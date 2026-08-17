@@ -10,6 +10,77 @@
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
+      CMS.registerPreviewStyle("/admin/editor-preview.css");
+
+      function asJson(value) {
+        return JSON.stringify(String(value || ""));
+      }
+
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>'"]/g, function (character) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character];
+        });
+      }
+
+      CMS.registerEditorComponent({
+        id: "dev-code",
+        label: "Dev code block",
+        fields: [
+          { name: "filename", label: "Tên tệp", widget: "string", required: false, hint: "Ví dụ: queue.ts" },
+          { name: "language", label: "Ngôn ngữ", widget: "select", options: ["typescript", "javascript", "tsx", "python", "rust", "bash", "sql", "json", "yaml", "html", "css"], default: "typescript" },
+          { name: "code", label: "Mã nguồn", widget: "code", default_language: "typescript", allow_language_selection: true, output_code_only: true },
+        ],
+        pattern: /^<CodeSnippet language=\{("(?:\\.|[^"\\])*")\} filename=\{("(?:\\.|[^"\\])*")\} code=\{("(?:\\.|[^"\\])*")\} \/>$/m,
+        fromBlock: function (match) {
+          return { language: JSON.parse(match[1]), filename: JSON.parse(match[2]), code: JSON.parse(match[3]) };
+        },
+        toBlock: function (data) {
+          return `<CodeSnippet language={${asJson(data.language || "typescript")}} filename={${asJson(data.filename)}} code={${asJson(data.code)}} />`;
+        },
+        toPreview: function (data) {
+          return `<pre><code>// ${escapeHtml(data.filename || "snippet")} · ${escapeHtml(data.language || "text")}\n\n${escapeHtml(data.code)}</code></pre>`;
+        },
+      });
+
+      CMS.registerEditorComponent({
+        id: "callout",
+        label: "Callout",
+        fields: [
+          { name: "tone", label: "Kiểu", widget: "select", options: ["note", "tip", "warning"], default: "note" },
+          { name: "title", label: "Tiêu đề", widget: "string", required: false },
+          { name: "content", label: "Nội dung", widget: "markdown" },
+        ],
+        pattern: /^<Callout tone=\{("(?:\\.|[^"\\])*")\} title=\{("(?:\\.|[^"\\])*")\}>\n?([\s\S]*?)\n?<\/Callout>$/m,
+        fromBlock: function (match) {
+          return { tone: JSON.parse(match[1]), title: JSON.parse(match[2]), content: match[3] };
+        },
+        toBlock: function (data) {
+          return `<Callout tone={${asJson(data.tone || "note")}} title={${asJson(data.title)}}>\n${data.content || ""}\n</Callout>`;
+        },
+        toPreview: function (data) {
+          return `<blockquote><strong>${escapeHtml(data.title || data.tone || "Ghi chú")}</strong><br />${escapeHtml(data.content)}</blockquote>`;
+        },
+      });
+
+      CMS.registerEditorComponent({
+        id: "details",
+        label: "Nội dung mở rộng",
+        fields: [
+          { name: "summary", label: "Tiêu đề mở rộng", widget: "string" },
+          { name: "content", label: "Nội dung", widget: "markdown" },
+        ],
+        pattern: /^<Details summary=\{("(?:\\.|[^"\\])*")\}>\n?([\s\S]*?)\n?<\/Details>$/m,
+        fromBlock: function (match) {
+          return { summary: JSON.parse(match[1]), content: match[2] };
+        },
+        toBlock: function (data) {
+          return `<Details summary={${asJson(data.summary)}}>\n${data.content || ""}\n</Details>`;
+        },
+        toPreview: function (data) {
+          return `<details><summary>${escapeHtml(data.summary)}</summary><p>${escapeHtml(data.content)}</p></details>`;
+        },
+      });
+
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", function (user) {
           if (!user) {

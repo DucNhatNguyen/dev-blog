@@ -7,6 +7,7 @@ import * as jsxRuntime from "react/jsx-runtime";
 import { getAllPosts, getPostBySlug, getPostSummaries, type Post } from "@/lib/posts";
 import { siteMetadata, siteUrl } from "../../site";
 import { ArticleHeader } from "./article-header";
+import { mdxComponents } from "./mdx-components";
 
 function formatDate(date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString("vi-VN", {
@@ -143,7 +144,7 @@ export default async function BlogDetail({
 
           <article className="article-body" id="article-content">
             {post.excerpt && <p className="article-lead">{post.excerpt}</p>}
-            <MdxContent />
+            <MdxContent components={mdxComponents} />
             <footer className="article-author"><div className="author-avatar">DN</div><div><span>Viết bởi</span><strong>Nguyễn Đức Nhật</strong><p>Software engineer, ghi chép về hệ thống và cách phần mềm vận hành dưới tải thực tế.</p></div></footer>
           </article>
         </div>

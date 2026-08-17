@@ -17,16 +17,15 @@ Every server has a clock, but no two clocks agree perfectly. Network delay, osci
 
 NTP reduces error but cannot eliminate it. When an application needs a stable order across nodes, attach logical information to each event instead of relying on a timestamp alone.
 
-```ts
-type HybridTimestamp = { wallTime: number; logical: number };
+<CodeSnippet language={"typescript"} filename={"hybrid-clock.ts"} code={"type HybridTimestamp = { wallTime: number; logical: number };\n\nfunction nextTimestamp(previous: HybridTimestamp): HybridTimestamp {\n  const wallTime = Date.now();\n  return wallTime > previous.wallTime\n    ? { wallTime, logical: 0 }\n    : { wallTime: previous.wallTime, logical: previous.logical + 1 };\n}"} />
 
-function nextTimestamp(previous: HybridTimestamp): HybridTimestamp {
-  const wallTime = Date.now();
-  return wallTime > previous.wallTime
-    ? { wallTime, logical: 0 }
-    : { wallTime: previous.wallTime, logical: previous.logical + 1 };
-}
-```
+<Callout tone={"tip"} title={"Gợi ý vận hành"}>
+Theo dõi clock offset như một chỉ số hạ tầng. Cảnh báo sớm khi độ lệch vượt ngưỡng thay vì chờ nó biến thành lỗi thứ tự dữ liệu.
+</Callout>
+
+<Details summary={"Khi nào chỉ cần timestamp thông thường?"}>
+Với dữ liệu chỉ phục vụ hiển thị hoặc log không cần suy luận quan hệ nhân quả, wall-clock time vẫn là lựa chọn đơn giản và phù hợp.
+</Details>
 
 ## Operational rule
 

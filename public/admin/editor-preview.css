@@ -1,0 +1,7 @@
+:root { color: #172024; background: #f8f5ef; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+body { max-width: 760px; margin: 0 auto; padding: 28px; color: #172024; line-height: 1.7; }
+h1, h2, h3 { color: #172024; line-height: 1.2; }
+blockquote { margin: 1.5rem 0; padding: .4rem 1rem; border-left: 3px solid #b17b22; background: #fffaf0; }
+pre { overflow-x: auto; padding: 16px; border-radius: 8px; background: #15181d; color: #e8dfcf; }
+code { font-family: "SFMono-Regular", Consolas, monospace; }
+img { max-width: 100%; height: auto; border-radius: 8px; }
